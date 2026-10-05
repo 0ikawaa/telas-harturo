@@ -693,6 +693,16 @@ const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233
   const caja = document.getElementById("escena-caja");
   if (!caja) return;
 
+  /* El probador esta en desarrollo: no se muestra al visitante. Se saca del
+     documento salvo que la URL traiga ?probador, y asi tampoco se descarga
+     three.js ni ninguna textura. Para verlo:
+        https://telas-harturo.vercel.app/?probador                         */
+  if (!new URLSearchParams(location.search).has("probador")){
+    const seccion = document.getElementById("probador");
+    if (seccion) seccion.remove();
+    return;
+  }
+
   let listo = false, iniciando = false;
   let renderizador, camara, escena3d, grupo, matTela, texTrama, cargador;
   let telaIdx = 0, arrastrando = false, ultX = 0, ultY = 0, girarSolo = true;
