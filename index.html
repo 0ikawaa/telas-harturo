@@ -327,6 +327,74 @@
     font-size:12.5px; color:var(--crema-mute); max-width:60ch;
   }
 
+
+  /* ---------- probador 3D ---------- */
+  .probador{border-top:1px solid var(--linea); background:var(--fondo-2)}
+  .probador-i{padding-block:clamp(44px,6vw,86px)}
+  .prob-rejilla{display:grid; gap:clamp(22px,3vw,44px); grid-template-columns:1fr; margin-top:clamp(20px,3vw,34px)}
+  @media (min-width:960px){ .prob-rejilla{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)} }
+  .escena-caja{
+    position:relative; border-radius:4px; overflow:hidden;
+    background:radial-gradient(118% 92% at 50% 8%, #2A2522 0%, #141110 62%, #0D0B0A 100%);
+    aspect-ratio:4/3; min-height:270px;
+  }
+  .escena-caja canvas{display:block; width:100%; height:100%; touch-action:none; cursor:grab}
+  .escena-caja canvas:active{cursor:grabbing}
+  .pista-3d{
+    position:absolute; left:50%; bottom:14px; transform:translateX(-50%); margin:0;
+    font-size:10px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    color:var(--crema-mute); pointer-events:none; transition:opacity .5s;
+  }
+  .cargando{
+    position:absolute; inset:0; display:grid; place-items:center;
+    font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--crema-mute);
+  }
+  .prob-tit{
+    font-family:var(--display); font-weight:400; margin:0;
+    font-size:clamp(1.9rem,4.4vw,2.9rem); line-height:1; letter-spacing:-.02em;
+  }
+  .prob-txt{margin:10px 0 0; color:var(--crema-mute); font-size:14.5px; max-width:40ch}
+  .muestra-foto{
+    position:relative; margin-top:16px; border-radius:3px; overflow:hidden;
+    aspect-ratio:16/9; background:var(--fondo);
+  }
+  .muestra-foto img{width:100%; height:100%; object-fit:cover; cursor:crosshair; display:block}
+  .gotero{
+    position:absolute; width:30px; height:30px; border-radius:50%; pointer-events:none;
+    border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.5), 0 2px 8px rgba(0,0,0,.5);
+    transform:translate(-50%,-50%); opacity:0; transition:opacity .25s;
+  }
+  .muestra-foto.activa .gotero{opacity:1}
+  .pie-muestra{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-top:9px; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--crema-mute); font-weight:600;
+  }
+  .obj-sel{display:flex; gap:7px; margin-top:14px}
+  .obj-bt{
+    border:1px solid var(--linea-fuerte); border-radius:999px; padding:7px 16px;
+    font-size:12px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--crema-mute); transition:background .25s, color .25s, border-color .25s;
+  }
+  .obj-bt:hover{color:var(--crema)}
+  .obj-bt[aria-pressed="true"]{background:var(--crema); color:var(--fondo); border-color:var(--crema)}
+  .chips-color{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px}
+  .chip-c{
+    width:32px; height:32px; border-radius:50%; padding:0;
+    border:1px solid var(--linea-fuerte); transition:transform .2s var(--curva), border-color .2s;
+  }
+  .chip-c:hover{transform:scale(1.12)}
+  .chip-c[aria-pressed="true"]{border-color:var(--crema); transform:scale(1.12)}
+  .prob-telas{
+    display:flex; gap:7px; overflow-x:auto; overscroll-behavior-x:contain;
+    margin-top:18px; padding-bottom:4px; border-top:1px solid var(--linea); padding-top:16px;
+  }
+  .prob-tela{flex:none; padding:0; border-radius:2px; overflow:hidden; line-height:0}
+  .prob-tela img{height:52px; width:auto; aspect-ratio:3/4; object-fit:cover; opacity:.42; transition:opacity .3s}
+  .prob-tela:hover img{opacity:.8}
+  .prob-tela[aria-current="true"] img{opacity:1}
+  .prob-tela[aria-current="true"]{outline:1px solid var(--crema); outline-offset:-1px}
+
   @media (prefers-reduced-motion:no-preference){ :root{scroll-behavior:smooth} }
   @media (prefers-reduced-motion:reduce){
     *{transition-duration:.01ms !important; animation:none !important}
@@ -386,6 +454,38 @@
   <div class="grilla" id="telas" style="scroll-margin-top:90px"></div>
 </main>
 
+
+<section class="probador" id="probador">
+  <div class="env probador-i">
+    <p class="sobre">Probador 3D</p>
+    <div class="prob-rejilla">
+      <div class="escena-caja" id="escena-caja">
+        <canvas id="escena"></canvas>
+        <p class="cargando" id="cargando">Preparando el 3D</p>
+        <p class="pista-3d" id="pista-3d" hidden>Arrastrá para girar</p>
+      </div>
+      <div>
+        <h2 class="prob-tit" id="prob-tit">Smart</h2>
+        <p class="prob-txt">El tejido del sillón es el de la foto de esta tela. Tocá cualquier parte de la foto y el sillón toma exactamente ese color.</p>
+        <div class="muestra-foto" id="muestra-foto">
+          <img id="foto-ref" alt="" width="950" height="1267">
+          <span class="gotero" id="gotero"></span>
+        </div>
+        <div class="pie-muestra">
+          <span>Foto de referencia</span>
+          <span id="color-actual">&nbsp;</span>
+        </div>
+        <div class="obj-sel">
+          <button class="obj-bt" data-obj="sillon" aria-pressed="true">Sillón</button>
+          <button class="obj-bt" data-obj="almohadon" aria-pressed="false">Almohadón</button>
+        </div>
+        <div class="chips-color" id="chips-color"></div>
+        <div class="prob-telas" id="prob-telas"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="pie">
   <div class="env pie-i">
     <img class="marca" src="img/logo.png" alt="Harturo Tapicería">
@@ -420,10 +520,6 @@ const TELAS = [
   {slug:"ragazza",     nombre:"Ragazza",     desc:"Tejido de tapicería."},
   {slug:"pane",        nombre:"Pane",        desc:"Tejido de tapicería de pana Easy Clean. Algunas manchas salen sólo con agua."},
   {slug:"velazquez",   nombre:"Velazquez",   desc:"Tejido de tapicería chenille español Easy Clean."},
-  {slug:"barradas",    nombre:"Barradas",    desc:"Tejido de tapicería chenille español Easy Clean."},
-  {slug:"carla",       nombre:"Carla",       desc:"Tejido de tapicería."},
-  {slug:"yoli",        nombre:"Yoli",        desc:"Tejido de tapicería."},
-  {slug:"alma",        nombre:"Alma",        desc:"Tejido de tapicería."},
   {slug:"simil-cuero", nombre:"Símil cuero", desc:"Tejido de tapicería símil cuero."}
 ];
 
@@ -573,4 +669,334 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft")  abrir(abierta - 1);
   if (e.key === "ArrowRight") abrir(abierta + 1);
 });
+</script>
+
+<script>
+/* ===== Probador 3D =====================================================
+   El material del sillon se arma con dos cosas reales de cada tela:
+   - la trama, recortada de la zona plana y enfocada de su propia foto
+   - el color, tomado de un pixel de esa misma foto (o de los chips, que
+     salen de la misma extraccion). Nada de colores inventados.        */
+const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233, 227]], "casual": [[137, 150, 159], [96, 114, 119], [191, 134, 96], [61, 53, 54], [144, 106, 83]], "deluxe": [[134, 80, 97], [173, 151, 134], [99, 28, 34], [160, 94, 13], [206, 140, 27], [237, 186, 155]], "convoy": [[42, 40, 39], [115, 41, 44], [168, 164, 159], [171, 29, 46], [189, 78, 44], [211, 125, 66]], "veluxe": [[59, 61, 85], [73, 96, 138], [32, 31, 38], [153, 153, 134], [233, 123, 44], [121, 121, 105]], "oslo": [[224, 223, 218], [149, 191, 171], [84, 97, 116], [123, 160, 139], [197, 164, 130]], "pana-milano": [[96, 124, 134], [116, 157, 202], [210, 102, 103], [247, 209, 122], [78, 95, 96], [220, 144, 63]], "dracco": [[179, 181, 181], [133, 133, 139], [103, 103, 103]], "sofia": [[89, 87, 88], [222, 101, 87], [196, 52, 61], [135, 75, 65]], "linen": [[228, 124, 153], [55, 166, 222], [56, 135, 175], [44, 107, 132], [35, 77, 87], [197, 113, 113]], "manhattan": [[80, 80, 79], [107, 108, 111], [140, 141, 135]], "zenith": [[65, 80, 77], [180, 82, 89], [145, 58, 62], [94, 117, 140], [112, 105, 71], [180, 135, 64]], "ragazza": [[9, 47, 94], [240, 145, 62], [174, 23, 60], [223, 112, 28], [29, 122, 151], [165, 73, 61]], "pane": [[88, 208, 225], [112, 128, 160], [68, 106, 151], [62, 93, 102], [207, 76, 66], [89, 80, 60]], "velazquez": [[162, 177, 195], [221, 160, 107], [173, 52, 66], [113, 127, 118], [130, 36, 45], [126, 78, 72]], "simil-cuero": [[230, 232, 231], [72, 58, 55], [122, 33, 37], [200, 199, 205], [45, 29, 22], [164, 97, 110]]};
+
+(() => {
+  const caja = document.getElementById("escena-caja");
+  if (!caja) return;
+
+  let listo = false, iniciando = false;
+  let renderizador, camara, escena3d, grupo, matTela, texTrama, cargador;
+  let telaIdx = 0, arrastrando = false, ultX = 0, ultY = 0, girarSolo = true;
+  let objeto = "sillon";
+  let giroY = -0.5, giroX = 0.06;
+
+  const $ = (id) => document.getElementById(id);
+  const sRGBaLin = (v) => { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v + 0.055)/1.055, 2.4); };
+  const MEDIA_TRAMA = 0.615;   // media del azulejo en lineal; la compensamos para no ensuciar el color
+
+  function cargarThree(){
+    return new Promise((ok, fail) => {
+      if (window.THREE) return ok();
+      const s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+      s.onload = ok;
+      s.onerror = () => fail(new Error("no se pudo cargar three.js"));
+      document.head.appendChild(s);
+    });
+  }
+
+  function cajaRedondeada(w, h, d, r){
+    const s = new THREE.Shape();
+    const x = -w/2, y = -h/2;
+    s.moveTo(x + r, y);
+    s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+    s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+    s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+    const bis = Math.min(r * 0.85, d * 0.3);
+    const g = new THREE.ExtrudeGeometry(s, {
+      depth: Math.max(0.01, d - bis*2), bevelEnabled: true,
+      bevelThickness: bis, bevelSize: bis, bevelSegments: 3, curveSegments: 10
+    });
+    g.center();
+    return g;
+  }
+
+  /* Almohadon: caja muy subdividida, inflada desde el centro y con las
+     esquinas pellizcadas, que es como se comporta un almohadon relleno. */
+  function armarAlmohadon(w, h, d){
+    const g = new THREE.BoxGeometry(w, h, d, 44, 44, 8);
+    const p = g.attributes.position;
+    const hw = w/2, hh = h/2, hd = d/2;
+    for (let i = 0; i < p.count; i++){
+      let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+      const fx = 1 - Math.pow(Math.abs(x)/hw, 2.1);
+      const fy = 1 - Math.pow(Math.abs(y)/hh, 2.1);
+      const panza = Math.max(0, fx) * Math.max(0, fy);
+      z += Math.sign(z) * hd * 1.75 * panza;
+      const rx = 1 - 0.13 * Math.pow(Math.abs(y)/hh, 3.2);
+      const ry = 1 - 0.13 * Math.pow(Math.abs(x)/hw, 3.2);
+      p.setXYZ(i, x * rx, y * ry, z);
+    }
+    g.computeVertexNormals();
+    return g;
+  }
+
+  function armarObjeto(tipo){
+    if (tipo === "almohadon"){
+      const g = new THREE.Group();
+      const m = new THREE.Mesh(armarAlmohadon(1.15, 1.15, 0.20), matTela);
+      m.castShadow = true; m.receiveShadow = true;
+      m.rotation.x = -0.18;
+      m.position.y = 0.62;
+      g.add(m);
+      return g;
+    }
+    return armarSillon();
+  }
+
+  function armarSillon(){
+    const g = new THREE.Group();
+    const añadir = (geo, x, y, z, rx) => {
+      const m = new THREE.Mesh(geo, matTela);
+      m.position.set(x, y, z);
+      if (rx) m.rotation.x = rx;
+      m.castShadow = true; m.receiveShadow = true;
+      g.add(m);
+      return m;
+    };
+    añadir(cajaRedondeada(1.66, 0.34, 0.88, 0.05),  0,    0.30,  0);           // armazon
+    añadir(cajaRedondeada(1.40, 0.20, 0.74, 0.07),  0,    0.555, 0.04);        // cojin del asiento
+    añadir(cajaRedondeada(1.66, 0.76, 0.26, 0.09),  0,    0.80, -0.30, -0.12); // respaldo
+    añadir(cajaRedondeada(0.26, 0.42, 0.88, 0.09), -0.70, 0.60,  0);           // brazo izq
+    añadir(cajaRedondeada(0.26, 0.42, 0.88, 0.09),  0.70, 0.60,  0);           // brazo der
+
+    const madera = new THREE.MeshStandardMaterial({color: 0x4A3626, roughness: 0.6, metalness: 0});
+    const pata = new THREE.CylinderGeometry(0.038, 0.026, 0.16, 14);
+    [[-0.70, 0.33], [0.70, 0.33], [-0.70, -0.33], [0.70, -0.33]].forEach(([x, z]) => {
+      const p = new THREE.Mesh(pata, madera);
+      p.position.set(x, 0.08, z);
+      p.castShadow = true;
+      g.add(p);
+    });
+    return g;
+  }
+
+  async function iniciar(){
+    if (listo || iniciando) return;
+    iniciando = true;
+    try { await cargarThree(); }
+    catch (e){ $("cargando").textContent = "No se pudo cargar el 3D"; return; }
+
+    const lienzo = $("escena");
+    renderizador = new THREE.WebGLRenderer({canvas: lienzo, antialias: true, alpha: true});
+    renderizador.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+    renderizador.outputEncoding = THREE.sRGBEncoding;
+    renderizador.shadowMap.enabled = true;
+    renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    escena3d = new THREE.Scene();
+    camara = new THREE.PerspectiveCamera(34, 4/3, 0.1, 100);
+    ubicarCamara();
+
+    escena3d.add(new THREE.HemisphereLight(0xffffff, 0x3b3330, 0.62));
+    const clave = new THREE.DirectionalLight(0xfff6ec, 1.05);
+    clave.position.set(2.6, 4.2, 2.8);
+    clave.castShadow = true;
+    clave.shadow.mapSize.set(1024, 1024);
+    clave.shadow.camera.near = 1; clave.shadow.camera.far = 14;
+    clave.shadow.camera.left = -3; clave.shadow.camera.right = 3;
+    clave.shadow.camera.top = 3; clave.shadow.camera.bottom = -3;
+    clave.shadow.bias = -0.0012;
+    escena3d.add(clave);
+    const relleno = new THREE.DirectionalLight(0xffffff, 0.30);
+    relleno.position.set(-3.4, 1.8, -1.6);
+    escena3d.add(relleno);
+
+    const piso = new THREE.Mesh(
+      new THREE.PlaneGeometry(14, 14),
+      new THREE.ShadowMaterial({opacity: 0.44})
+    );
+    piso.rotation.x = -Math.PI/2;
+    piso.receiveShadow = true;
+    escena3d.add(piso);
+
+    cargador = new THREE.TextureLoader();
+    matTela = new THREE.MeshStandardMaterial({color: 0xBBBBBB, roughness: 0.94, metalness: 0});
+    grupo = armarObjeto(objeto);
+    escena3d.add(grupo);
+
+    listo = true;
+    $("cargando").hidden = true;
+    $("pista-3d").hidden = false;
+    ajustar();
+    ponerTela(telaIdx);
+    animar();
+  }
+
+  function ubicarCamara(){
+    if (objeto === "almohadon"){
+      camara.position.set(0.55, 1.02, 1.95);
+      camara.lookAt(0, 0.60, 0);
+    } else {
+      camara.position.set(2.15, 1.42, 2.65);
+      camara.lookAt(0, 0.56, 0);
+    }
+  }
+
+  function cambiarObjeto(tipo){
+    objeto = tipo;
+    document.querySelectorAll(".obj-bt").forEach(b =>
+      b.setAttribute("aria-pressed", b.dataset.obj === tipo));
+    if (!listo) return;
+    escena3d.remove(grupo);
+    grupo.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+    grupo = armarObjeto(tipo);
+    escena3d.add(grupo);
+    ubicarCamara();
+  }
+
+  function ajustar(){
+    if (!listo) return;
+    const w = caja.clientWidth, h = caja.clientHeight;
+    renderizador.setSize(w, h, false);
+    camara.aspect = w / h;
+    camara.updateProjectionMatrix();
+  }
+
+  function animar(){
+    requestAnimationFrame(animar);
+    if (!listo) return;
+    if (girarSolo && !arrastrando) giroY += 0.0032;
+    grupo.rotation.y = giroY;
+    grupo.rotation.x = giroX;
+    renderizador.render(escena3d, camara);
+  }
+
+  function aplicarColor(r, g, b){
+    if (!matTela) return;
+    const k = 1 / MEDIA_TRAMA;
+    matTela.color.setRGB(
+      Math.min(1, sRGBaLin(r) * k),
+      Math.min(1, sRGBaLin(g) * k),
+      Math.min(1, sRGBaLin(b) * k)
+    );
+    $("color-actual").textContent = "#" + [r,g,b].map(v => v.toString(16).padStart(2,"0")).join("").toUpperCase();
+    $("gotero").style.background = `rgb(${r},${g},${b})`;
+    document.querySelectorAll(".chip-c").forEach(c => c.setAttribute("aria-pressed", c.dataset.rgb === `${r},${g},${b}`));
+  }
+
+  function ponerTela(i){
+    telaIdx = i;
+    const t = TELAS[i];
+    $("prob-tit").textContent = t.nombre;
+    const foto = $("foto-ref");
+    foto.src = `img/${t.slug}-textura.webp`;
+    foto.alt = `Foto de referencia de la tela ${t.nombre}`;
+    document.querySelectorAll(".prob-tela").forEach(b =>
+      b.setAttribute("aria-current", Number(b.dataset.i) === i));
+
+    const cols = PALETA[t.slug] || [];
+    $("chips-color").innerHTML = cols.map(c =>
+      `<button class="chip-c" data-rgb="${c[0]},${c[1]},${c[2]}" style="background:rgb(${c[0]},${c[1]},${c[2]})" aria-label="Probar este color"></button>`
+    ).join("");
+
+    if (listo){
+      cargador.load(`img/tejido/${t.slug}.webp`, (tx) => {
+        tx.wrapS = tx.wrapT = THREE.MirroredRepeatWrapping;
+        tx.repeat.set(objeto === "almohadon" ? 2.6 : 4, objeto === "almohadon" ? 2.6 : 4);
+        tx.encoding = THREE.sRGBEncoding;
+        tx.anisotropy = renderizador.capabilities.getMaxAnisotropy();
+        if (texTrama) texTrama.dispose();
+        texTrama = tx;
+        matTela.map = tx;
+        matTela.bumpMap = tx;
+        matTela.bumpScale = 0.17;
+        matTela.needsUpdate = true;
+      });
+    }
+    if (cols.length) aplicarColor(...cols[0]);
+  }
+
+  /* --- cuentagotas sobre la foto real --- */
+  const lienzoAux = document.createElement("canvas");
+  const ctxAux = lienzoAux.getContext("2d", {willReadFrequently: true});
+  function pixelDeFoto(ev){
+    const foto = $("foto-ref");
+    if (!foto.complete || !foto.naturalWidth) return null;
+    const r = foto.getBoundingClientRect();
+    const px = (ev.clientX - r.left) / r.width;
+    const py = (ev.clientY - r.top) / r.height;
+    if (px < 0 || px > 1 || py < 0 || py > 1) return null;
+    // la foto se muestra recortada (object-fit:cover): hay que mapear igual
+    const ri = foto.naturalWidth / foto.naturalHeight, rc = r.width / r.height;
+    let sx, sy, sw, sh;
+    if (ri > rc){ sh = foto.naturalHeight; sw = sh * rc; sy = 0; sx = (foto.naturalWidth - sw)/2; }
+    else        { sw = foto.naturalWidth;  sh = sw / rc; sx = 0; sy = (foto.naturalHeight - sh)/2; }
+    lienzoAux.width = lienzoAux.height = 1;
+    ctxAux.drawImage(foto, sx + px*sw, sy + py*sh, 1, 1, 0, 0, 1, 1);
+    const d = ctxAux.getImageData(0, 0, 1, 1).data;
+    return {rgb: [d[0], d[1], d[2]], x: ev.clientX - r.left, y: ev.clientY - r.top};
+  }
+
+  const zonaFoto = $("muestra-foto");
+  zonaFoto.addEventListener("pointermove", (ev) => {
+    const p = pixelDeFoto(ev);
+    if (!p) return;
+    zonaFoto.classList.add("activa");
+    const gt = $("gotero");
+    gt.style.left = p.x + "px";
+    gt.style.top = p.y + "px";
+    gt.style.background = `rgb(${p.rgb[0]},${p.rgb[1]},${p.rgb[2]})`;
+  });
+  zonaFoto.addEventListener("pointerleave", () => {
+    zonaFoto.classList.remove("activa");
+    if (listo && PALETA[TELAS[telaIdx].slug]) $("gotero").style.background = "";
+  });
+  zonaFoto.addEventListener("click", (ev) => {
+    const p = pixelDeFoto(ev);
+    if (p) aplicarColor(...p.rgb);
+  });
+
+  /* --- girar con el dedo o el mouse --- */
+  const lienzo3d = $("escena");
+  lienzo3d.addEventListener("pointerdown", (e) => {
+    arrastrando = true; girarSolo = false;
+    ultX = e.clientX; ultY = e.clientY;
+    lienzo3d.setPointerCapture(e.pointerId);
+    const pista = $("pista-3d");
+    if (pista) pista.style.opacity = "0";
+  });
+  lienzo3d.addEventListener("pointermove", (e) => {
+    if (!arrastrando) return;
+    giroY += (e.clientX - ultX) * 0.009;
+    giroX = Math.max(-0.22, Math.min(0.42, giroX + (e.clientY - ultY) * 0.005));
+    ultX = e.clientX; ultY = e.clientY;
+  });
+  const soltar = (e) => { arrastrando = false; try { lienzo3d.releasePointerCapture(e.pointerId); } catch (_){} };
+  lienzo3d.addEventListener("pointerup", soltar);
+  lienzo3d.addEventListener("pointercancel", soltar);
+
+  /* --- selector de telas --- */
+  $("prob-telas").innerHTML = TELAS.map((t, i) =>
+    `<button class="prob-tela" data-i="${i}" aria-current="${i===0}" aria-label="Probar ${t.nombre}">
+       <img src="img/${t.slug}-tira.webp" alt="" width="220" height="293" loading="lazy" decoding="async">
+     </button>`).join("");
+
+  document.addEventListener("click", (e) => {
+    const bt = e.target.closest(".prob-tela");
+    if (bt) return ponerTela(Number(bt.dataset.i));
+    const ob = e.target.closest(".obj-bt");
+    if (ob) return cambiarObjeto(ob.dataset.obj);
+    const ch = e.target.closest(".chip-c");
+    if (ch) return aplicarColor(...ch.dataset.rgb.split(",").map(Number));
+  });
+
+  addEventListener("resize", ajustar);
+  ponerTela(0);   // deja la foto y los chips puestos aunque el 3D todavia no cargue
+
+  // el 3D se carga recien cuando la seccion esta por verse
+  new IntersectionObserver((ent, obs) => {
+    if (ent.some(x => x.isIntersecting)){ obs.disconnect(); iniciar(); }
+  }, {rootMargin: "320px"}).observe(caja);
+})();
 </script>
