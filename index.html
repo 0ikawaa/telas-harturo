@@ -1,0 +1,576 @@
+<title>Telas Harturo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
+<style>
+  /* Galeria oscura, de una sola pieza: el fondo nunca cambia con el tema del
+     visitante para que el catalogo se vea igual en cualquier telefono. */
+  :root{
+    --fondo:#100E0D;
+    --fondo-2:#191513;
+    --crema:#F3ECE2;
+    --crema-mute:#9D9289;
+    --tan:#C2A88A;
+    --linea:rgba(243,236,226,.13);
+    --linea-fuerte:rgba(243,236,226,.28);
+    --display:"Bodoni Moda",Georgia,"Times New Roman",serif;
+    --texto:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+    --curva:cubic-bezier(.22,.68,.26,1);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--fondo); color:var(--crema);
+    font-family:var(--texto); font-size:16px; line-height:1.5;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  img{display:block; max-width:100%}
+  button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--tan); outline-offset:4px; border-radius:2px}
+
+  .env{width:100%; max-width:1440px; margin-inline:auto; padding-inline:clamp(18px,4vw,56px)}
+
+  /* grano sobre todo el documento */
+  .grano{
+    position:fixed; inset:0; z-index:90; pointer-events:none; opacity:.045;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- encabezado ---------- */
+  .barra{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+    transition:background .4s var(--curva), border-color .4s var(--curva);
+    border-bottom:1px solid transparent;
+  }
+  .barra.pegada{
+    background:rgba(16,14,13,.88);
+    background:color-mix(in srgb, var(--fondo) 86%, transparent);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border-bottom-color:var(--linea);
+  }
+  .barra-i{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:16px}
+  .marca{height:36px; width:auto; filter:invert(1) brightness(1.08); transition:height .4s var(--curva)}
+  .barra.pegada .marca{height:28px}
+  .contacto{display:flex; align-items:center; gap:20px; font-size:13.5px; white-space:nowrap}
+  .contacto a{
+    text-decoration:none; display:inline-flex; align-items:center; gap:7px;
+    font-weight:500; letter-spacing:.01em; transition:color .25s;
+  }
+  .contacto a:hover{color:var(--tan)}
+  .contacto svg{width:15px; height:15px; flex:none}
+  /* mismo peso que .contacto a, si no el display:none no gana */
+  .contacto .solo-ancho{display:none}
+  @media (min-width:640px){ .contacto .solo-ancho{display:inline-flex} }
+
+  /* ---------- apertura ---------- */
+  .apertura{padding-block:clamp(30px,6vw,64px) clamp(26px,4vw,44px)}
+  .apertura-rejilla{
+    display:grid; gap:clamp(28px,4vw,56px); align-items:stretch;
+    grid-template-columns:1fr;
+  }
+  @media (min-width:900px){
+    .apertura-rejilla{grid-template-columns:minmax(0,1.32fr) minmax(0,1fr)}
+    /* con la foto al lado el titulo tiene menos ancho: achicarlo para que entre */
+    .apertura h1{font-size:clamp(3.6rem,8vw,8.6rem)}
+  }
+  .sobre{
+    font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--tan); font-weight:600; margin:0 0 clamp(14px,2.4vw,24px);
+    display:flex; align-items:center; gap:12px;
+  }
+  .sobre::after{content:""; flex:1; height:1px; background:var(--linea)}
+
+  .apertura h1{
+    font-family:var(--display); font-weight:400; margin:0;
+    font-size:clamp(3.2rem,12.4vw,10.5rem); line-height:.84;
+    letter-spacing:-.04em; text-wrap:balance;
+  }
+  .apertura h1 .reng{display:block}
+  /* la palabra clave va rellena con el tejido Dracco: el titulo es de tela */
+  .en-tela{
+    display:inline-block; font-style:italic; color:var(--crema);
+  }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .en-tela{
+      background-image:url("img/titulo.webp");
+      background-size:135% auto;
+      -webkit-background-clip:text; background-clip:text;
+      color:transparent; -webkit-text-fill-color:transparent;
+      filter:brightness(1.14) contrast(1.06) saturate(.9);
+      animation:derivar 30s ease-in-out infinite alternate;
+    }
+  }
+  @keyframes derivar{
+    from{background-position:16% 26%}
+    to{background-position:84% 48%}
+  }
+
+  .bajada{
+    margin:clamp(20px,3vw,32px) 0 0; max-width:42ch;
+    color:var(--crema-mute); font-size:clamp(.95rem,1.6vw,1.08rem);
+  }
+  .pie-apertura{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+    flex-wrap:wrap; margin-top:clamp(24px,3.4vw,38px);
+    padding-top:20px; border-top:1px solid var(--linea);
+  }
+  .total{
+    font-family:var(--display); font-size:clamp(2.6rem,6vw,4.2rem); line-height:.88;
+    letter-spacing:-.025em; white-space:nowrap; margin:0;
+  }
+  .total small{
+    display:block; font-family:var(--texto); font-size:10.5px; letter-spacing:.26em;
+    text-transform:uppercase; color:var(--crema-mute); font-weight:600; margin-top:9px;
+  }
+  .bajar{
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+    font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    border:1px solid var(--linea-fuerte); border-radius:999px; padding:12px 20px;
+    transition:background .3s var(--curva), color .3s var(--curva), border-color .3s var(--curva);
+  }
+  .bajar:hover{background:var(--crema); color:var(--fondo); border-color:var(--crema)}
+  .bajar span{display:inline-block; animation:latir 2.6s ease-in-out infinite}
+  @keyframes latir{0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)}}
+
+  /* foto grande que va pasando sola por las 20 telas */
+  .pila{
+    position:relative; width:100%; aspect-ratio:4/5; overflow:hidden;
+    border-radius:4px; background:var(--fondo-2); padding:0; display:block;
+    cursor:pointer;
+  }
+  @media (min-width:900px){ .pila{aspect-ratio:auto; min-height:460px} }
+  .pila .capa{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    opacity:0; transition:opacity 1.1s var(--curva);
+  }
+  .pila .capa.viva{opacity:1}
+  .pila::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,rgba(16,14,13,.3) 0%,transparent 34%,transparent 58%,rgba(16,14,13,.76) 100%);
+  }
+  .pila-pie{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    display:flex; align-items:baseline; gap:12px;
+    padding:18px clamp(14px,2vw,20px);
+  }
+  .pila-num{
+    font-size:10.5px; letter-spacing:.14em; color:var(--tan);
+    font-weight:600; font-variant-numeric:tabular-nums;
+  }
+  .pila-nombre{
+    font-family:var(--display); font-size:clamp(1.4rem,3vw,2rem);
+    line-height:1; letter-spacing:-.02em; margin:0;
+  }
+  .barrita{position:absolute; left:0; right:0; top:0; height:2px; z-index:2; background:var(--linea)}
+  .barrita i{display:block; height:100%; background:var(--crema); width:0; animation:llenar 4.6s linear infinite}
+  @keyframes llenar{from{width:0} to{width:100%}}
+
+  /* ---------- tira en movimiento ---------- */
+  .tira{
+    position:relative; overflow:hidden; margin-top:clamp(28px,5vw,56px);
+    border-block:1px solid var(--linea); padding-block:18px;
+    mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  }
+  .tira-pista{display:flex; gap:12px; width:max-content; animation:correr 54s linear infinite}
+  .tira:hover .tira-pista{animation-play-state:paused}
+  .tira img{
+    height:clamp(76px,10vw,124px); width:auto; aspect-ratio:3/4; object-fit:cover;
+    border-radius:2px; opacity:.72; transition:opacity .3s;
+  }
+  .tira img:hover{opacity:1}
+  @keyframes correr{ from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
+
+  /* ---------- grilla ---------- */
+  .grilla{
+    display:grid; gap:clamp(34px,5vw,76px) clamp(14px,2.4vw,30px);
+    grid-template-columns:repeat(2,1fr);
+    padding-block:clamp(48px,8vw,104px) clamp(60px,9vw,120px);
+  }
+  @media (min-width:860px){ .grilla{grid-template-columns:repeat(3,1fr)} }
+  /* escalonado: la columna del medio baja, para que no quede todo en linea */
+  @media (min-width:860px){ .grilla .tela:nth-child(3n+2){margin-top:clamp(30px,5vw,72px)} }
+  @media (max-width:859px){ .grilla .tela:nth-child(2n){margin-top:clamp(22px,6vw,48px)} }
+
+  .tela{display:flex; flex-direction:column; gap:14px; padding:0; text-align:left}
+  .marco{
+    position:relative; aspect-ratio:3/4; overflow:hidden; border-radius:3px;
+    background:var(--fondo-2);
+  }
+  .marco img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transition:opacity .55s var(--curva), transform .8s var(--curva);
+  }
+  .marco .color{opacity:0}
+  .tela:hover .marco .textura,
+  .tela:focus-visible .marco .textura{opacity:0}
+  .tela:hover .marco .color,
+  .tela:focus-visible .marco .color{opacity:1}
+  .tela:hover .marco img,
+  .tela:focus-visible .marco img{transform:scale(1.04)}
+
+  .pista{
+    position:absolute; left:12px; bottom:12px; z-index:2;
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600;
+    background:rgba(16,14,13,.74);
+    background:color-mix(in srgb, var(--fondo) 72%, transparent);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--linea-fuerte); border-radius:999px; padding:6px 12px;
+    opacity:0; transform:translateY(6px); transition:opacity .35s var(--curva), transform .35s var(--curva);
+  }
+  .tela:hover .pista, .tela:focus-visible .pista{opacity:1; transform:translateY(0)}
+
+  .linea-nombre{display:flex; align-items:baseline; gap:12px; border-top:1px solid var(--linea); padding-top:12px}
+  .num{
+    font-size:10.5px; letter-spacing:.14em; color:var(--tan); font-weight:600;
+    font-variant-numeric:tabular-nums; flex:none; padding-top:4px;
+  }
+  .nombre{
+    font-family:var(--display); font-weight:400;
+    font-size:clamp(1.5rem,3.6vw,2.3rem); line-height:1; letter-spacing:-.02em;
+  }
+  .detalle{margin:0; color:var(--crema-mute); font-size:13.5px; line-height:1.45; max-width:34ch}
+
+  /* ---------- ficha a pantalla completa ---------- */
+  .ficha{
+    position:fixed; inset:0; z-index:80; background:var(--fondo);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  /* el fondo nunca se transparenta: lo que aparece es el contenido,
+     asi la pagina de atras no se ve nunca a traves de la ficha */
+  .ficha-top, .ficha-cuerpo, .ficha-tira{animation:entrar .42s var(--curva)}
+  @keyframes entrar{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
+  .ficha-top{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) clamp(18px,4vw,40px) 14px;
+    border-bottom:1px solid var(--linea); flex:none;
+  }
+  .ficha-id{display:flex; align-items:baseline; gap:14px; min-width:0}
+  .ficha-id .num{padding-top:0}
+  .ficha-id h2{
+    font-family:var(--display); font-weight:400; margin:0;
+    font-size:clamp(1.9rem,5vw,3.4rem); line-height:1; letter-spacing:-.025em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .mandos{display:flex; gap:8px; flex:none}
+  .mando{
+    width:42px; height:42px; border:1px solid var(--linea-fuerte); border-radius:999px;
+    display:grid; place-items:center; font-size:16px; line-height:1;
+    transition:background .25s, color .25s, border-color .25s;
+  }
+  .mando:hover:not(:disabled){background:var(--crema); color:var(--fondo); border-color:var(--crema)}
+  .mando:disabled{opacity:.25; cursor:default}
+
+  .ficha-cuerpo{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain}
+  .ficha-fotos{
+    display:grid; gap:clamp(10px,1.6vw,18px); grid-template-columns:1fr 1fr;
+    padding:clamp(16px,3vw,28px) clamp(18px,4vw,40px) 0;
+  }
+  @media (max-width:620px){ .ficha-fotos{grid-template-columns:1fr} }
+  .foto{margin:0; position:relative}
+  .foto img{
+    width:100%; height:clamp(290px,54vh,600px); object-fit:contain;
+    border-radius:3px; background:var(--fondo-2);
+  }
+  @media (max-width:620px){ .foto img{height:clamp(300px,62vh,520px)} }
+  .foto figcaption{
+    position:absolute; left:12px; bottom:12px;
+    font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600;
+    background:rgba(16,14,13,.74);
+    background:color-mix(in srgb, var(--fondo) 72%, transparent);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--linea-fuerte); border-radius:999px; padding:6px 12px;
+  }
+  .ficha-texto{
+    display:flex; flex-wrap:wrap; gap:18px 48px; align-items:flex-start;
+    justify-content:space-between;
+    padding:clamp(20px,3vw,30px) clamp(18px,4vw,40px) clamp(24px,4vw,34px);
+  }
+  .ficha-desc{margin:0; max-width:52ch; color:var(--crema-mute); font-size:clamp(.95rem,1.6vw,1.05rem)}
+  .ficha-cta{
+    display:inline-flex; align-items:center; gap:9px; text-decoration:none; flex:none;
+    border:1px solid var(--linea-fuerte); border-radius:999px; padding:11px 20px;
+    font-size:14px; font-weight:500; transition:background .25s, color .25s, border-color .25s;
+  }
+  .ficha-cta:hover{background:var(--crema); color:var(--fondo); border-color:var(--crema)}
+  .ficha-cta svg{width:16px; height:16px}
+
+  .ficha-tira{
+    flex:none; display:flex; gap:8px; overflow-x:auto; overscroll-behavior-x:contain;
+    padding:12px clamp(18px,4vw,40px) calc(env(safe-area-inset-bottom,0px) + 14px);
+    border-top:1px solid var(--linea); scrollbar-width:thin;
+  }
+  .mini{flex:none; padding:0; border-radius:2px; overflow:hidden; line-height:0}
+  .mini img{
+    height:58px; width:auto; aspect-ratio:3/4; object-fit:cover;
+    opacity:.4; transition:opacity .3s;
+  }
+  .mini:hover img{opacity:.8}
+  .mini[aria-current="true"] img{opacity:1}
+  .mini[aria-current="true"]{outline:1px solid var(--crema); outline-offset:-1px}
+
+  /* ---------- pie ---------- */
+  .pie{border-top:1px solid var(--linea)}
+  .pie-i{
+    padding-block:clamp(44px,6vw,72px) clamp(44px,6vw,64px);
+    display:flex; flex-wrap:wrap; gap:34px; align-items:flex-start; justify-content:space-between;
+  }
+  .pie .marca{height:60px}
+  .pie-datos{display:flex; flex-direction:column; gap:11px; font-size:16px}
+  .pie-datos a{text-decoration:none; display:inline-flex; align-items:center; gap:10px; font-weight:500}
+  .pie-datos a:hover{color:var(--tan)}
+  .nota{
+    flex-basis:100%; border-top:1px solid var(--linea); padding-top:20px; margin:0;
+    font-size:12.5px; color:var(--crema-mute); max-width:60ch;
+  }
+
+  @media (prefers-reduced-motion:no-preference){ :root{scroll-behavior:smooth} }
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.01ms !important; animation:none !important}
+    .marco .color{opacity:0}
+  }
+</style>
+
+<div class="grano" aria-hidden="true"></div>
+
+<header class="barra" id="barra">
+  <div class="env barra-i">
+    <img class="marca" src="img/logo.png" alt="Harturo Tapicería">
+    <nav class="contacto">
+      <a href="tel:+59899005220">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.8 2.1z"/></svg>
+        099 005 220
+      </a>
+      <a class="solo-ancho" href="https://www.instagram.com/tapiceriaharturo/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>
+        tapiceriaharturo
+      </a>
+    </nav>
+  </div>
+</header>
+
+<section class="env apertura">
+  <p class="sobre">Harturo Tapicería · Montevideo</p>
+  <div class="apertura-rejilla">
+    <div>
+      <h1>
+        <span class="reng">Catálogo</span>
+        <span class="reng"><span class="en-tela">de Telas</span></span>
+      </h1>
+      <p class="bajada">Pasá por encima de cualquier tela y vas a ver su carta de colores completa. Tocala para verla en grande.</p>
+      <div class="pie-apertura">
+        <p class="total" id="total">20<small>Telas disponibles</small></p>
+        <a class="bajar" href="#telas">Ver las telas <span>&#8595;</span></a>
+      </div>
+    </div>
+    <button class="pila" id="pila" aria-label="Ver esta tela en grande">
+      <span class="barrita" aria-hidden="true"><i></i></span>
+      <img class="capa viva" id="capa-a" alt="" width="700" height="933" decoding="async">
+      <img class="capa"      id="capa-b" alt="" width="700" height="933" decoding="async">
+      <span class="pila-pie">
+        <span class="pila-num" id="pila-num">01</span>
+        <span class="pila-nombre" id="pila-nombre"></span>
+      </span>
+    </button>
+  </div>
+</section>
+
+<div class="tira" aria-hidden="true">
+  <div class="tira-pista" id="tira-pista"></div>
+</div>
+
+<main class="env">
+  <div class="grilla" id="telas" style="scroll-margin-top:90px"></div>
+</main>
+
+<footer class="pie">
+  <div class="env pie-i">
+    <img class="marca" src="img/logo.png" alt="Harturo Tapicería">
+    <div class="pie-datos">
+      <a href="tel:+59899005220">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.8 2.1z"/></svg>
+        099 005 220
+      </a>
+      <a href="https://www.instagram.com/tapiceriaharturo/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:18px;height:18px"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>
+        tapiceriaharturo
+      </a>
+    </div>
+    <p class="nota">Los colores pueden variar según la pantalla. Antes de decidir, pedinos la muestra física de la tela que te guste.</p>
+  </div>
+</footer>
+
+<script>
+const TELAS = [
+  {slug:"smart",       nombre:"Smart",       desc:"Tejido de tapicería anti manchas con tecnología Fibreguard."},
+  {slug:"casual",      nombre:"Casual",      desc:"Tejido de tapicería anti manchas 100% algodón, con tecnología Fibreguard."},
+  {slug:"deluxe",      nombre:"Deluxe",      desc:"Tejido de tapicería anti manchas con tecnología Fibreguard, tacto aterciopelado y pet friendly."},
+  {slug:"convoy",      nombre:"Convoy",      desc:"Tela de tapicería anti manchas, colección Convoy, con tecnología Fibreguard."},
+  {slug:"veluxe",      nombre:"Veluxe",      desc:"Tejido de tapicería anti manchas con tecnología Fibreguard, tipo terciopelo."},
+  {slug:"oslo",        nombre:"Oslo",        desc:"Tejido de tapicería easy clean."},
+  {slug:"pana-milano", nombre:"Pana Milano", desc:"Tejido de tapicería easy clean."},
+  {slug:"dracco",      nombre:"Dracco",      desc:"Tejido de tapicería."},
+  {slug:"sofia",       nombre:"Sofia",       desc:"Tejido de tapicería anti manchas."},
+  {slug:"linen",       nombre:"Linen",       desc:"Tejido de tapicería."},
+  {slug:"manhattan",   nombre:"Manhattan",   desc:"Tejido de tapicería."},
+  {slug:"zenith",      nombre:"Zenith",      desc:"Tejido de tapicería."},
+  {slug:"ragazza",     nombre:"Ragazza",     desc:"Tejido de tapicería."},
+  {slug:"pane",        nombre:"Pane",        desc:"Tejido de tapicería de pana Easy Clean. Algunas manchas salen sólo con agua."},
+  {slug:"velazquez",   nombre:"Velazquez",   desc:"Tejido de tapicería chenille español Easy Clean."},
+  {slug:"barradas",    nombre:"Barradas",    desc:"Tejido de tapicería chenille español Easy Clean."},
+  {slug:"carla",       nombre:"Carla",       desc:"Tejido de tapicería."},
+  {slug:"yoli",        nombre:"Yoli",        desc:"Tejido de tapicería."},
+  {slug:"alma",        nombre:"Alma",        desc:"Tejido de tapicería."},
+  {slug:"simil-cuero", nombre:"Símil cuero", desc:"Tejido de tapicería símil cuero."}
+];
+
+const $ = (id) => document.getElementById(id);
+const dosDig = (n) => String(n + 1).padStart(2, "0");
+let abierta = -1, ultimoFoco = null, ficha = null;
+
+$("total").firstChild.nodeValue = TELAS.length;
+
+/* tira: la lista va dos veces para que el bucle no corte */
+$("tira-pista").innerHTML = TELAS.concat(TELAS).map(t =>
+  `<img src="img/${t.slug}-tira.webp" alt="" width="220" height="293" decoding="async">`
+).join("");
+
+$("telas").innerHTML = TELAS.map((t,i) => `
+  <button class="tela" data-i="${i}" aria-label="Ver ${t.nombre} en grande">
+    <span class="marco">
+      <img class="textura" src="img/${t.slug}-thumb.webp" alt="Textura de la tela ${t.nombre}" width="700" height="933" loading="lazy" decoding="async">
+      <img class="color" src="img/${t.slug}-color.webp" alt="" width="700" height="933" loading="lazy" decoding="async">
+      <span class="pista">Carta de colores</span>
+    </span>
+    <span>
+      <span class="linea-nombre">
+        <span class="num">${dosDig(i)}</span>
+        <span class="nombre">${t.nombre}</span>
+      </span>
+      <span class="detalle" style="display:block;margin-top:9px">${t.desc}</span>
+    </span>
+  </button>`).join("");
+
+/* foto de apertura: va pasando sola por las 20 telas */
+const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let pIdx = 0, capaViva = $("capa-a"), capaOculta = $("capa-b");
+
+function mostrarPila(i, conCruce){
+  const t = TELAS[i];
+  const url = `img/${t.slug}-thumb.webp`;
+  const pintar = () => {
+    $("pila-num").textContent = dosDig(i);
+    $("pila-nombre").textContent = t.nombre;
+    const destino = conCruce ? capaOculta : capaViva;
+    destino.src = url;
+    destino.alt = `Textura de la tela ${t.nombre}`;
+    if (conCruce){
+      destino.classList.add("viva");
+      capaViva.classList.remove("viva");
+      [capaViva, capaOculta] = [capaOculta, capaViva];
+    }
+    pIdx = i;
+  };
+  if (!conCruce) return pintar();
+  /* cargar antes de cruzar, para que no parpadee */
+  const pre = new Image();
+  pre.onload = pintar;
+  pre.onerror = pintar;
+  pre.src = url;
+}
+
+mostrarPila(0, false);
+if (!quieto) setInterval(() => mostrarPila((pIdx + 1) % TELAS.length, true), 4600);
+
+/* encabezado compacto al bajar */
+const barra = $("barra");
+addEventListener("scroll", () => barra.classList.toggle("pegada", scrollY > 24), {passive:true});
+
+const TEL_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.8 2.1z"/></svg>`;
+
+function armarFicha(){
+  ficha = document.createElement("div");
+  ficha.className = "ficha";
+  ficha.id = "ficha";
+  ficha.setAttribute("role", "dialog");
+  ficha.setAttribute("aria-modal", "true");
+  ficha.setAttribute("aria-labelledby", "f-nombre");
+  ficha.innerHTML = `
+    <div class="ficha-top">
+      <span class="ficha-id">
+        <span class="num" id="f-num"></span>
+        <h2 id="f-nombre"></h2>
+      </span>
+      <span class="mandos">
+        <button class="mando" id="f-ant" aria-label="Tela anterior">&#8592;</button>
+        <button class="mando" id="f-sig" aria-label="Tela siguiente">&#8594;</button>
+        <button class="mando" id="f-x"   aria-label="Cerrar">&#10005;</button>
+      </span>
+    </div>
+    <div class="ficha-cuerpo" id="f-cuerpo">
+      <div class="ficha-fotos">
+        <figure class="foto"><img id="f-textura" alt=""><figcaption>Textura</figcaption></figure>
+        <figure class="foto"><img id="f-carta" alt=""><figcaption>Carta de colores</figcaption></figure>
+      </div>
+      <div class="ficha-texto">
+        <p class="ficha-desc" id="f-desc"></p>
+        <a class="ficha-cta" href="tel:+59899005220">${TEL_SVG} Consultar por esta tela</a>
+      </div>
+    </div>
+    <div class="ficha-tira" id="f-tira">
+      ${TELAS.map((t,i) => `<button class="mini" data-j="${i}" aria-label="${t.nombre}"><img src="img/${t.slug}-tira.webp" alt="" width="220" height="293" loading="lazy" decoding="async"></button>`).join("")}
+    </div>`;
+  document.body.appendChild(ficha);
+}
+
+function abrir(i){
+  if (i < 0 || i >= TELAS.length) return;
+  const t = TELAS[i];
+  if (!ficha){ ultimoFoco = document.activeElement; armarFicha(); document.body.style.overflow = "hidden"; }
+  abierta = i;
+  $("f-num").textContent = dosDig(i);
+  $("f-nombre").textContent = t.nombre;
+  $("f-desc").textContent = t.desc;
+  const tex = $("f-textura"), car = $("f-carta");
+  tex.src = `img/${t.slug}-textura.webp`; tex.alt = `Textura de la tela ${t.nombre}`;
+  car.src = `img/${t.slug}-carta.webp`;   car.alt = `Carta de colores de la tela ${t.nombre}`;
+  $("f-ant").disabled = i === 0;
+  $("f-sig").disabled = i === TELAS.length - 1;
+  $("f-cuerpo").scrollTop = 0;
+  ficha.querySelectorAll(".mini").forEach(m => {
+    const act = Number(m.dataset.j) === i;
+    m.setAttribute("aria-current", act);
+    if (act) m.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+  });
+  $("f-x").focus();
+}
+
+function cerrar(){
+  if (!ficha) return;
+  ficha.remove(); ficha = null; abierta = -1;
+  document.body.style.overflow = "";
+  if (ultimoFoco && ultimoFoco.isConnected) ultimoFoco.focus();
+}
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#pila")) return abrir(pIdx);
+  const tela = e.target.closest(".tela");
+  if (tela){ abrir(Number(tela.dataset.i)); return; }
+  if (!ficha) return;
+  const mini = e.target.closest(".mini");
+  if (mini){ abrir(Number(mini.dataset.j)); return; }
+  if (e.target.closest("#f-x"))   return cerrar();
+  if (e.target.closest("#f-ant")) return abrir(abierta - 1);
+  if (e.target.closest("#f-sig")) return abrir(abierta + 1);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (!ficha) return;
+  if (e.key === "Escape")     cerrar();
+  if (e.key === "ArrowLeft")  abrir(abierta - 1);
+  if (e.key === "ArrowRight") abrir(abierta + 1);
+});
+</script>
