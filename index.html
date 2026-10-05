@@ -293,7 +293,26 @@
   .mando:hover:not(:disabled){background:var(--crema); color:var(--fondo); border-color:var(--crema)}
   .mando:disabled{opacity:.25; cursor:default}
 
-  .ficha-cuerpo{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain}
+  .ficha-cuerpo{
+    flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+    /* el navegador se queda con el desplazamiento vertical y nos deja a
+       nosotros el horizontal, que es el que cambia de tela */
+    touch-action:pan-y;
+  }
+  .ficha-cuerpo.volviendo{transition:transform .26s var(--curva)}
+  .aviso-desliz{
+    position:absolute; left:50%; bottom:86px; transform:translateX(-50%); z-index:3;
+    display:flex; align-items:center; gap:9px; white-space:nowrap;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:600;
+    background:rgba(16,14,13,.82); border:1px solid var(--linea-fuerte);
+    border-radius:999px; padding:9px 16px; pointer-events:none;
+    animation:avisoFuera 3.6s var(--curva) forwards;
+  }
+  @keyframes avisoFuera{
+    0%{opacity:0; transform:translate(-50%,8px)}
+    12%,72%{opacity:1; transform:translate(-50%,0)}
+    100%{opacity:0; transform:translate(-50%,-6px)}
+  }
   .ficha-fotos{
     display:grid; gap:clamp(10px,1.6vw,18px); grid-template-columns:1fr 1fr;
     padding:clamp(16px,3vw,28px) clamp(18px,4vw,40px) 0;
@@ -660,6 +679,63 @@ function armarFicha(){
       ${TELAS.map((t,i) => `<button class="mini" data-j="${i}" aria-label="${t.nombre}"><img src="img/${t.slug}-tira.webp" alt="" width="220" height="293" loading="lazy" decoding="async"></button>`).join("")}
     </div>`;
   document.body.appendChild(ficha);
+  activarDeslizar();
+  mostrarAvisoDesliz();
+}
+
+/* Deslizar con el dedo para pasar de tela. Solo gestos tactiles: con mouse
+   quedan las flechas y el teclado. */
+function activarDeslizar(){
+  const cuerpo = $("f-cuerpo");
+  let x0 = 0, y0 = 0, activo = false, dx = 0;
+
+  const soltarTodo = (animado) => {
+    activo = false;
+    cuerpo.classList.toggle("volviendo", !!animado);
+    cuerpo.style.transform = "";
+    if (animado) setTimeout(() => cuerpo.classList.remove("volviendo"), 280);
+  };
+
+  cuerpo.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse") return;
+    x0 = e.clientX; y0 = e.clientY; dx = 0; activo = true;
+    cuerpo.classList.remove("volviendo");
+  });
+
+  cuerpo.addEventListener("pointermove", (e) => {
+    if (!activo) return;
+    const ex = e.clientX - x0, ey = e.clientY - y0;
+    // si el gesto es mas vertical que horizontal, es scroll: lo soltamos
+    if (Math.abs(ey) > Math.abs(ex) && Math.abs(ey) > 10){ soltarTodo(false); return; }
+    dx = ex;
+    // en los extremos el arrastre se resiste, para que se note que no hay mas
+    const tope = (dx > 0 && abierta === 0) || (dx < 0 && abierta === TELAS.length - 1);
+    cuerpo.style.transform = "translateX(" + (dx * (tope ? 0.1 : 0.32)) + "px)";
+  });
+
+  const terminar = () => {
+    if (!activo) return;
+    const paso = dx < 0 ? 1 : -1;
+    const sirve = Math.abs(dx) > 55 && abierta + paso >= 0 && abierta + paso < TELAS.length;
+    soltarTodo(true);
+    if (sirve) abrir(abierta + paso);
+  };
+  cuerpo.addEventListener("pointerup", terminar);
+  cuerpo.addEventListener("pointercancel", () => soltarTodo(true));
+}
+
+/* El aviso se muestra una sola vez por visitante, y solo si hay pantalla tactil */
+function mostrarAvisoDesliz(){
+  if (!matchMedia("(pointer: coarse)").matches) return;
+  let visto = false;
+  try { visto = localStorage.getItem("harturo-desliz") === "1"; } catch (_){}
+  if (visto) return;
+  const a = document.createElement("p");
+  a.className = "aviso-desliz";
+  a.textContent = "Deslizá para ver otra tela";
+  ficha.appendChild(a);
+  setTimeout(() => a.remove(), 3800);
+  try { localStorage.setItem("harturo-desliz", "1"); } catch (_){}
 }
 
 function abrir(i){
