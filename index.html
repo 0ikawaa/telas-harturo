@@ -1,3 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Catálogo de telas de tapicería de Harturo Tapicería, Montevideo. 22 telas con la textura en detalle y la carta de colores completa de cada una.">
+<meta name="theme-color" content="#100E0D">
+<link rel="icon" href="img/favicon32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="img/icono180.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://telas-harturo.vercel.app/">
+<meta property="og:site_name" content="Harturo Tapicería">
+<meta property="og:locale" content="es_UY">
+<meta property="og:title" content="Catálogo de Telas · Harturo Tapicería">
+<meta property="og:description" content="Catálogo de telas de tapicería de Harturo Tapicería, Montevideo. 22 telas con la textura en detalle y la carta de colores completa de cada una.">
+<meta property="og:image" content="https://telas-harturo.vercel.app/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Catálogo de telas de Harturo Tapicería">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  /* Reset minimo que antes ponia el envoltorio del publicador. Sin la regla
+     de [hidden] los elementos con display propio no se ocultan con el.hidden. */
+  :root{
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  [hidden]{display:none !important}
+</style>
 <title>Telas Harturo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -404,7 +433,8 @@
     .marco .color{opacity:0}
   }
 </style>
-
+</head>
+<body>
 <div class="grano" aria-hidden="true"></div>
 
 <header class="barra" id="barra">
@@ -1029,3 +1059,6 @@ const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233
   }, {rootMargin: "320px"}).observe(caja);
 })();
 </script>
+
+</body>
+</html>
