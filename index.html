@@ -378,6 +378,9 @@
   }
   .obj-bt:hover{color:var(--crema)}
   .obj-bt[aria-pressed="true"]{background:var(--crema); color:var(--fondo); border-color:var(--crema)}
+  .nota-patron{margin:12px 0 0; font-size:13px; color:var(--tan); max-width:40ch}
+  .muestra-foto.sin-gotero img{cursor:default}
+  .muestra-foto.sin-gotero .gotero{display:none}
   .chips-color{display:flex; flex-wrap:wrap; gap:7px; margin-top:12px}
   .chip-c{
     width:32px; height:32px; border-radius:50%; padding:0;
@@ -479,6 +482,7 @@
           <button class="obj-bt" data-obj="sillon" aria-pressed="true">Sillón</button>
           <button class="obj-bt" data-obj="almohadon" aria-pressed="false">Almohadón</button>
         </div>
+        <p class="nota-patron" id="nota-patron" hidden>Esta tela tiene dibujo propio, así que se muestra con su estampado real y no se le cambia el color.</p>
         <div class="chips-color" id="chips-color"></div>
         <div class="prob-telas" id="prob-telas"></div>
       </div>
@@ -520,7 +524,13 @@ const TELAS = [
   {slug:"ragazza",     nombre:"Ragazza",     desc:"Tejido de tapicería."},
   {slug:"pane",        nombre:"Pane",        desc:"Tejido de tapicería de pana Easy Clean. Algunas manchas salen sólo con agua."},
   {slug:"velazquez",   nombre:"Velazquez",   desc:"Tejido de tapicería chenille español Easy Clean."},
-  {slug:"simil-cuero", nombre:"Símil cuero", desc:"Tejido de tapicería símil cuero."}
+  {slug:"simil-cuero", nombre:"Símil cuero", desc:"Tejido de tapicería símil cuero."},
+  {slug:"fellow", nombre:"Fellow", desc:"Tejido de tapicería."},
+  {slug:"forest", nombre:"Forest", desc:"Tejido de tapicería."},
+  {slug:"outbond", nombre:"Outbond", desc:"Tejido de tapicería.", patron:true},
+  {slug:"pindrive", nombre:"Pindrive", desc:"Tejido de tapicería."},
+  {slug:"quiet", nombre:"Quiet", desc:"Tejido de tapicería."},
+  {slug:"warm", nombre:"Warm", desc:"Tejido de tapicería."}
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -677,7 +687,7 @@ document.addEventListener("keydown", (e) => {
    - la trama, recortada de la zona plana y enfocada de su propia foto
    - el color, tomado de un pixel de esa misma foto (o de los chips, que
      salen de la misma extraccion). Nada de colores inventados.        */
-const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233, 227]], "casual": [[137, 150, 159], [96, 114, 119], [191, 134, 96], [61, 53, 54], [144, 106, 83]], "deluxe": [[134, 80, 97], [173, 151, 134], [99, 28, 34], [160, 94, 13], [206, 140, 27], [237, 186, 155]], "convoy": [[42, 40, 39], [115, 41, 44], [168, 164, 159], [171, 29, 46], [189, 78, 44], [211, 125, 66]], "veluxe": [[59, 61, 85], [73, 96, 138], [32, 31, 38], [153, 153, 134], [233, 123, 44], [121, 121, 105]], "oslo": [[224, 223, 218], [149, 191, 171], [84, 97, 116], [123, 160, 139], [197, 164, 130]], "pana-milano": [[96, 124, 134], [116, 157, 202], [210, 102, 103], [247, 209, 122], [78, 95, 96], [220, 144, 63]], "dracco": [[179, 181, 181], [133, 133, 139], [103, 103, 103]], "sofia": [[89, 87, 88], [222, 101, 87], [196, 52, 61], [135, 75, 65]], "linen": [[228, 124, 153], [55, 166, 222], [56, 135, 175], [44, 107, 132], [35, 77, 87], [197, 113, 113]], "manhattan": [[80, 80, 79], [107, 108, 111], [140, 141, 135]], "zenith": [[65, 80, 77], [180, 82, 89], [145, 58, 62], [94, 117, 140], [112, 105, 71], [180, 135, 64]], "ragazza": [[9, 47, 94], [240, 145, 62], [174, 23, 60], [223, 112, 28], [29, 122, 151], [165, 73, 61]], "pane": [[88, 208, 225], [112, 128, 160], [68, 106, 151], [62, 93, 102], [207, 76, 66], [89, 80, 60]], "velazquez": [[162, 177, 195], [221, 160, 107], [173, 52, 66], [113, 127, 118], [130, 36, 45], [126, 78, 72]], "simil-cuero": [[230, 232, 231], [72, 58, 55], [122, 33, 37], [200, 199, 205], [45, 29, 22], [164, 97, 110]]};
+const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233, 227]], "casual": [[137, 150, 159], [96, 114, 119], [191, 134, 96], [61, 53, 54], [144, 106, 83]], "deluxe": [[134, 80, 97], [173, 151, 134], [99, 28, 34], [160, 94, 13], [206, 140, 27], [237, 186, 155]], "convoy": [[42, 40, 39], [115, 41, 44], [168, 164, 159], [171, 29, 46], [189, 78, 44], [211, 125, 66]], "veluxe": [[59, 61, 85], [73, 96, 138], [32, 31, 38], [153, 153, 134], [233, 123, 44], [121, 121, 105]], "oslo": [[224, 223, 218], [149, 191, 171], [84, 97, 116], [123, 160, 139], [197, 164, 130]], "pana-milano": [[96, 124, 134], [116, 157, 202], [210, 102, 103], [247, 209, 122], [78, 95, 96], [220, 144, 63]], "dracco": [[179, 181, 181], [133, 133, 139], [103, 103, 103]], "sofia": [[89, 87, 88], [222, 101, 87], [196, 52, 61], [135, 75, 65]], "linen": [[228, 124, 153], [55, 166, 222], [56, 135, 175], [44, 107, 132], [35, 77, 87], [197, 113, 113]], "manhattan": [[80, 80, 79], [107, 108, 111], [140, 141, 135]], "zenith": [[65, 80, 77], [180, 82, 89], [145, 58, 62], [94, 117, 140], [112, 105, 71], [180, 135, 64]], "ragazza": [[9, 47, 94], [240, 145, 62], [174, 23, 60], [223, 112, 28], [29, 122, 151], [165, 73, 61]], "pane": [[88, 208, 225], [112, 128, 160], [68, 106, 151], [62, 93, 102], [207, 76, 66], [89, 80, 60]], "velazquez": [[162, 177, 195], [221, 160, 107], [173, 52, 66], [113, 127, 118], [130, 36, 45], [126, 78, 72]], "simil-cuero": [[230, 232, 231], [72, 58, 55], [122, 33, 37], [200, 199, 205], [45, 29, 22], [164, 97, 110]], "fellow": [[181, 117, 111], [167, 90, 103], [130, 133, 123], [157, 105, 112], [139, 117, 115]], "forest": [[140, 151, 152], [169, 171, 166], [93, 48, 41], [137, 130, 123], [104, 70, 64]], "outbond": [[180, 180, 174], [135, 134, 129], [151, 150, 145]], "pindrive": [[183, 110, 101], [151, 80, 75], [76, 53, 48], [99, 93, 83], [142, 153, 163]], "quiet": [[156, 132, 126], [167, 120, 104], [146, 128, 107], [154, 107, 92], [125, 131, 136], [133, 118, 119]], "warm": [[166, 144, 117], [155, 123, 89], [138, 99, 92], [84, 115, 124], [124, 95, 67], [111, 109, 99]]};
 
 (() => {
   const caja = document.getElementById("escena-caja");
@@ -900,8 +910,14 @@ const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233
       `<button class="chip-c" data-rgb="${c[0]},${c[1]},${c[2]}" style="background:rgb(${c[0]},${c[1]},${c[2]})" aria-label="Probar este color"></button>`
     ).join("");
 
+    // Una tela a rayas no se puede representar tiñendo un gris: perderia las
+    // rayas. Para esas va la foto en color y se desactiva el color.
+    const conDibujo = !!t.patron;
+    $("chips-color").hidden = conDibujo;
+    $("muestra-foto").classList.toggle("sin-gotero", conDibujo);
+    $("nota-patron").hidden = !conDibujo;
     if (listo){
-      cargador.load(`img/tejido/${t.slug}.webp`, (tx) => {
+      cargador.load(conDibujo ? `img/patron/${t.slug}.webp` : `img/tejido/${t.slug}.webp`, (tx) => {
         tx.wrapS = tx.wrapT = THREE.MirroredRepeatWrapping;
         tx.repeat.set(objeto === "almohadon" ? 2.6 : 4, objeto === "almohadon" ? 2.6 : 4);
         tx.encoding = THREE.sRGBEncoding;
@@ -910,11 +926,13 @@ const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233
         texTrama = tx;
         matTela.map = tx;
         matTela.bumpMap = tx;
-        matTela.bumpScale = 0.17;
+        matTela.bumpScale = conDibujo ? 0.05 : 0.17;
+        if (conDibujo) matTela.color.setRGB(1, 1, 1);   // la foto ya trae el color
         matTela.needsUpdate = true;
       });
     }
-    if (cols.length) aplicarColor(...cols[0]);
+    if (!conDibujo && cols.length) aplicarColor(...cols[0]);
+    if (conDibujo) $("color-actual").textContent = "";
   }
 
   /* --- cuentagotas sobre la foto real --- */
@@ -953,6 +971,7 @@ const PALETA = {"smart": [[148, 144, 144], [65, 64, 60], [90, 91, 94], [232, 233
     if (listo && PALETA[TELAS[telaIdx].slug]) $("gotero").style.background = "";
   });
   zonaFoto.addEventListener("click", (ev) => {
+    if (TELAS[telaIdx].patron) return;
     const p = pixelDeFoto(ev);
     if (p) aplicarColor(...p.rgb);
   });
