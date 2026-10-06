@@ -2,6 +2,9 @@
 
 Catálogo online de telas de tapicería de **Harturo Tapicería** (Montevideo).
 
+![Catálogo de telas](./docs/captura.jpg)
+
+
 Sitio estático: un solo `index.html` sin dependencias ni build. Se publica tal cual.
 
 ## Contenido
